@@ -9,17 +9,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".TwoPlayerActivity"
-            android:launchMode="singleTask"/>
-        <activity android:name=".SinglePlayerActivity"
-            android:launchMode="singleTask"/>
-        <activity android:name=".StatisticsActivity"
-            android:launchMode="singleTask"/>
-        <activity android:name=".OptionsActivity"
-            android:launchMode="singleTask"/>
-        <activity android:name=".ModeSelectionActivity"
-            android:launchMode="singleTask"/>
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".TwoPlayerActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".SinglePlayerActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".StatisticsActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".OptionsActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ModeSelectionActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".MainActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

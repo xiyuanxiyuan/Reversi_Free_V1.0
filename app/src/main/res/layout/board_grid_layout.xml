@@ -7,6 +7,13 @@
         android:id="@+id/board_grid"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:visibility="visible"
+        android:background="#00000000"/>
+
+    <ImageView
+        android:id="@+id/board_grid_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:visibility="visible" />
 
 </RelativeLayout>

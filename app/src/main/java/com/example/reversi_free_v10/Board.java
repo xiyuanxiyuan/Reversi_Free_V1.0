@@ -2,6 +2,8 @@ package com.example.reversi_free_v10;
 
 import android.util.Log;
 
+import java.util.Scanner;
+
 import static android.content.ContentValues.TAG;
 
 public class Board {
@@ -29,7 +31,9 @@ public class Board {
     //7  0  0  0  0  0  0  0  0 |
     //8  0  0  0  0  0  0  0  0 |
     //   A  B  C  D  E  F  G  H ↓
-    long mask = 0xffffffffffffffffL;
+
+
+    //long mask = 0xffffffffffffffffL;
     //------------------------->
     //1  1  1  1  1  1  1  1  1 |
     //2  1  1  1  1  1  1  1  1 |
@@ -40,8 +44,7 @@ public class Board {
     //7  1  1  1  1  1  1  1  1 |
     //8  1  1  1  1  1  1  1  1 |
     //   A  B  C  D  E  F  G  H ↓
-    long location[] = new long[64];
-    long legal_Drop_Location_For_Black = 0x102004080000L;
+    //long legal_Drop_Location_For_Black = 0x102004080000L;
     //------------------------->
     //1  0  0  0  0  0  0  0  0 |
     //2  0  0  0  0  0  0  0  0 |
@@ -52,7 +55,7 @@ public class Board {
     //7  0  0  0  0  0  0  0  0 |
     //8  0  0  0  0  0  0  0  0 |
     //   A  B  C  D  E  F  G  H ↓
-    long legal_Drop_Location_For_White = 0x80420100000L;
+    //long legal_Drop_Location_For_White = 0x80420100000L;
     //------------------------->
     //1  0  0  0  0  0  0  0  0 |
     //2  0  0  0  0  0  0  0  0 |
@@ -64,25 +67,18 @@ public class Board {
     //8  0  0  0  0  0  0  0  0 |
     //   A  B  C  D  E  F  G  H ↓
 
-    public Board() {
-        long init = 0x1L;
-        for (int i = 0; i < 64; i++) {
-            location[i] = init << i;
-        }
-        ;
-    }
 
-    public long get_Location(long location){
-        return location;
-    }
+    public Board() { }
+
+    //-------------------------------------------------------------------------------
 
     public void drop_White(long location) {
 
         if((location&search_Legal_Location(black,white))!=0x0L)
         {
             white |=location;
-        white|=reversal(location,black,white);
-        black&=~reversal(location,black,white);
+            white|=reversal(location,black,white);
+            black&=~white;
         }
     }
 
@@ -90,10 +86,10 @@ public class Board {
         if((location&search_Legal_Location(white,black))!=0x0L){
             black|=location;
             black|=reversal(location,white,black);
-            white&=~reversal(location,white,black);
+            white&=~black;
         }
-
     }
+
 
     //------------------------------------------------------------------------------------------
 
