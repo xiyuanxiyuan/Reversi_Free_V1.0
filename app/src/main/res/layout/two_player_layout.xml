@@ -1,6 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/boardbackgound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/board_hd"
+        android:layout_alignTop="@id/up"
+        android:layout_alignBottom="@id/down"
+        android:layout_alignLeft="@id/left"
+        android:layout_alignRight="@id/right"/>
+
+    <include layout="@layout/test_board_recyclerviewlayout"
+        android:id="@+id/c123"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:layout_centerInParent="true" />
+    <Space
+        android:id="@+id/up"
+        android:layout_width="5dp"
+        android:layout_height="5dp"
+        android:layout_above="@id/c123"
+        android:layout_alignLeft="@id/c123"
+        android:layout_alignRight="@id/c123"/>
+    <Space
+        android:id="@+id/down"
+        android:layout_width="5dp"
+        android:layout_height="5dp"
+        android:layout_below="@id/c123"
+        android:layout_alignLeft="@id/c123"
+        android:layout_alignRight="@id/c123"/>
+    <Space
+        android:id="@+id/left"
+        android:layout_width="5dp"
+        android:layout_height="5dp"
+        android:layout_toLeftOf="@id/c123"
+        android:layout_alignTop="@id/c123"
+        android:layout_alignBottom="@id/c123"/>
+    <Space
+        android:id="@+id/right"
+        android:layout_width="5dp"
+        android:layout_height="5dp"
+        android:layout_toRightOf="@id/c123"
+        android:layout_alignTop="@id/c123"
+        android:layout_alignBottom="@id/c123"/>
+
+</RelativeLayout>

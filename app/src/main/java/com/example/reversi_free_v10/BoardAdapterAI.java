@@ -1,28 +1,24 @@
 package com.example.reversi_free_v10;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
-public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> {
+
+public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHolder> {
 
     private List<BoardGrid> mBoardGridList;
+    private int mplayMode=2;
+    private int mdifficulty=0;
     private long touchedLocation;
     private Board board = new Board();
     private int flag = 1;
+    private CustomAlgorithm customAlgorithm=new CustomAlgorithm(board);
     private int mpieceSort;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -37,62 +33,35 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
         }
     }
 
-    public BoardAdapter(List<BoardGrid> boardGridList, int pieceSort) {
+    public BoardAdapterAI(List<BoardGrid> boardGridList, int playMode, int difficulty,int pieceSort) {
         mBoardGridList = boardGridList;
-        mpieceSort = pieceSort;
+        mplayMode=playMode;
+        mdifficulty=difficulty;
+        mpieceSort=pieceSort;
     }
 
     @Override
-    public BoardAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BoardAdapterAI.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.board_grid_layout, parent, false);
         final ViewHolder holder = new ViewHolder(view);
-
-        holder.boardGrid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                int position = holder.getAdapterPosition();
-                BoardGrid boardGrid = mBoardGridList.get(position);
-
-                touchedLocation = boardGrid.getButton_id();
-
-                Toast.makeText(view.getContext(), "you clicked: " + touchedLocation, Toast.LENGTH_SHORT).show();
-
-                notifyDataSetChanged();
-
-                if ((touchedLocation & (board.search_Legal_Location(board.white, board.black) | board.search_Legal_Location(board.black, board.white))) == 0x0L) {
-                    return;
-                }
-
-                if ((touchedLocation & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
-                    board.drop_Black(touchedLocation);
-                    notifyDataSetChanged();
-                    flag = -1;
-                } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
-                    flag = -1;
-                }
-
-                if ((touchedLocation & board.search_Legal_Location(board.black, board.white)) != 0x0L && flag == -1) {//白棋落子
-                    board.drop_White(touchedLocation);
-                    notifyDataSetChanged();
-                    flag = 1;
-                } else if ((board.search_Legal_Location(board.black, board.white)) == 0x0L && (board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == -1) {
-                    flag = 1;
-                }
-
-                if (board.search_Legal_Location(board.white, board.black) == 0x0L && board.search_Legal_Location(board.black, board.white) == 0x0L) {
-                    Toast.makeText(view.getContext(), "game over", Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
 
-        BoardGrid boardGrid = mBoardGridList.get(position);
+        final BoardGrid boardGrid = mBoardGridList.get(position);
+
+        if(mplayMode==3) {
+
+            if ((customAlgorithm.get_Reversal_Number_Most_Location(board.white, board.black) & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
+                board.drop_Black(customAlgorithm.get_Reversal_Number_Most_Location(board.white, board.black));
+                //notifyDataSetChanged();
+                flag = -1;
+            } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
+                flag = -1;
+            }
+        }
 
         int boardgrid_piece = boardGrid.getBoardgrid_piece();
 
@@ -123,6 +92,91 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
         }
 
         changeBoardGrids(board.white, board.black);
+
+
+        holder.boardGrid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = holder.getAdapterPosition();
+                BoardGrid boardGrid = mBoardGridList.get(position);
+                touchedLocation = boardGrid.getButton_id();
+
+                Toast.makeText(v.getContext(), "you clicked: " + touchedLocation, Toast.LENGTH_SHORT).show();
+
+
+//-------------------------------------------------------------------------------------------------
+                if(mplayMode==1) {
+                    if((touchedLocation&(board.search_Legal_Location(board.white,board.black) |board.search_Legal_Location(board.black,board.white)))==0x0L){
+                        return;
+                    }
+
+                    if ((touchedLocation & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
+                        board.drop_Black(touchedLocation);
+                        notifyDataSetChanged();
+                        flag = -1;
+                    } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
+                        flag = -1;
+                    }
+
+                    if ((customAlgorithm.get_Reversal_Number_Most_Location(board.black, board.white)& board.search_Legal_Location(board.black, board.white)) != 0x0L && flag == -1) {//白棋落子
+                        board.drop_White(customAlgorithm.get_Reversal_Number_Most_Location(board.black, board.white));
+                        notifyDataSetChanged();
+                        flag = 1;
+                    } else if ((board.search_Legal_Location(board.black, board.white)) == 0x0L && (board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == -1) {
+                        flag = 1;
+                    }
+
+                    if(board.search_Legal_Location(board.white,board.black)==0x0L&&board.search_Legal_Location(board.black,board.white)==0x0L){
+                        Toast.makeText(v.getContext(),"game over",Toast.LENGTH_LONG).show();
+                    }
+                }
+//-------------------------------------------------------------------------------------------------
+                if(mplayMode==2) {
+                    if((touchedLocation&(board.search_Legal_Location(board.white,board.black) |board.search_Legal_Location(board.black,board.white)))==0x0L){
+                        return;
+                    }
+
+                    if ((touchedLocation & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
+                        board.drop_Black(touchedLocation);
+                        notifyDataSetChanged();
+                        flag = -1;
+                    } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
+                        flag = -1;
+                    }
+
+                    if ((customAlgorithm.get_Reversal_Number_Most_Location(board.black, board.white)& board.search_Legal_Location(board.black, board.white)) != 0x0L && flag == -1) {//白棋落子
+                        board.drop_White(customAlgorithm.get_Reversal_Number_Most_Location(board.black, board.white));
+                        notifyDataSetChanged();
+                        flag = 1;
+                    } else if ((board.search_Legal_Location(board.black, board.white)) == 0x0L && (board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == -1) {
+                        flag = 1;
+                    }
+
+                    if(board.search_Legal_Location(board.white,board.black)==0x0L&&board.search_Legal_Location(board.black,board.white)==0x0L){
+                        Toast.makeText(v.getContext(),"game over",Toast.LENGTH_LONG).show();
+                    }
+                }
+//-------------------------------------------------------------------------------------------------
+                if(mplayMode==3) {
+                    if((touchedLocation&(board.search_Legal_Location(board.white,board.black) |board.search_Legal_Location(board.black,board.white)))==0x0L){
+                        return;
+                    }
+
+                    if ((touchedLocation & board.search_Legal_Location(board.black, board.white)) != 0x0L && flag == -1) {//白棋落子
+                        board.drop_White(touchedLocation );
+                        notifyDataSetChanged();
+                        flag = 1;
+                    } else if ((board.search_Legal_Location(board.black, board.white)) == 0x0L && (board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == -1) {
+                        flag = 1;
+                    }
+
+                    if(board.search_Legal_Location(board.white,board.black)==0x0L&&board.search_Legal_Location(board.black,board.white)==0x0L){
+                        Toast.makeText(v.getContext(),"game over",Toast.LENGTH_LONG).show();
+                    }
+                }
+
+            }
+        });
 
     }
 

@@ -2,13 +2,102 @@ package com.example.reversi_free_v10;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
-public class ModeSelectionActivity extends AppCompatActivity {
+public class ModeSelectionActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private Intent intent;
+    private int playMode=1;
+    private int difficulty=1;
+    private GlobalData globalData;
+    private boolean isHideStatusBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mode_selection_layout);
+
+        globalData=(GlobalData)getApplication();
+        isHideStatusBar=globalData.isHideStatusBar();
+        if (isHideStatusBar) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    // 全屏显示，隐藏状态栏和导航栏，拉出状态栏和导航栏显示一会儿后消失。
+                    getWindow().getDecorView().setSystemUiVisibility(
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                } else {
+                    // 全屏显示，隐藏状态栏
+                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+                }
+            }
+        }
+
+        Button exchangePerMatch = (Button) findViewById(R.id.exchange_per_match);
+        Button playAsBlack = (Button) findViewById(R.id.play_as_black);
+        Button playAsWhite = (Button) findViewById(R.id.play_as_white);
+        exchangePerMatch.setOnClickListener(this);
+        playAsBlack.setOnClickListener(this);
+        playAsWhite.setOnClickListener(this);
+
+
+        Button simple = (Button) findViewById(R.id.simple);
+        Button middle = (Button) findViewById(R.id.middle);
+        Button hard = (Button) findViewById(R.id.hard);
+        simple.setOnClickListener(this);
+        middle.setOnClickListener(this);
+        hard.setOnClickListener(this);
+
+
+        Button play = (Button) findViewById(R.id.play);
+        Button back = (Button) findViewById(R.id.back);
+        play.setOnClickListener(this);
+        back.setOnClickListener(this);
     }
+
+    @Override
+    public void onClick(View v){
+        switch (v.getId()){
+            case R.id.exchange_per_match:
+                playMode=1;
+                break;
+            case R.id.play_as_black:
+                playMode=2;
+                break;
+            case R.id.play_as_white:
+                playMode=3;
+                break;
+            case R.id.simple:
+                difficulty=1;
+                break;
+            case R.id.middle:
+                difficulty=2;
+                break;
+            case R.id.hard:
+                difficulty=3;
+                break;
+            case R.id.play:
+                intent =new Intent(ModeSelectionActivity.this,SinglePlayerActivity.class);
+                intent.putExtra("playMode",playMode);
+                intent.putExtra("difficulty",difficulty);
+                startActivity(intent);
+                break;
+            case R.id.back:
+                intent=new Intent(ModeSelectionActivity.this,MainActivity.class);
+                startActivity(intent);
+                break;
+        }
+    }
+
+
 }
+

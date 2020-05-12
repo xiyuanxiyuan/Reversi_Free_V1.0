@@ -8,7 +8,8 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:visibility="visible"
-        android:background="#00000000"/>
+        android:background="#00000000"
+        android:text=""/>
 
     <ImageView
         android:id="@+id/board_grid_image"

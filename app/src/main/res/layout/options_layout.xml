@@ -45,7 +45,7 @@
             android:layout_weight="0.5" />
 
         <Button
-            android:id="@+id/last_Board"
+            android:id="@+id/last_board"
             android:layout_width="60dp"
             android:layout_height="80dp"
             android:layout_gravity="center_vertical"
