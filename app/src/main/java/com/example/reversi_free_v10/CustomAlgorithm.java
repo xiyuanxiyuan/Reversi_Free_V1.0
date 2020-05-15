@@ -20,7 +20,7 @@ public class CustomAlgorithm {
 
         for(int i=0;i<64;i++){
             if((legal_Drop_Location&check<<i)!=0x0L){
-                result=get_Reversal_Number(check,opponent_Board,my_Board);
+                result=get_Reversal_Number(check<<i,opponent_Board,my_Board);
                 if(result>=the_Most_Reversal_Number){
                     the_Most_Reversal_Number=result;
                     the_Most_Reversal_Location=check<<i;

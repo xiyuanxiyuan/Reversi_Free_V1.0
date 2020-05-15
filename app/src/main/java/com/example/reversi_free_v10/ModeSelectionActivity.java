@@ -14,7 +14,14 @@ public class ModeSelectionActivity extends AppCompatActivity implements View.OnC
     private int playMode=1;
     private int difficulty=1;
     private GlobalData globalData;
+    private int pieceSort;
     private boolean isHideStatusBar;
+    Button exchangePerMatch;
+    Button playAsBlack;
+    Button playAsWhite;
+    Button simple;
+    Button middle;
+    Button hard;
 
 
     @Override
@@ -23,6 +30,7 @@ public class ModeSelectionActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.mode_selection_layout);
 
         globalData=(GlobalData)getApplication();
+        pieceSort=globalData.getPieceSort();
         isHideStatusBar=globalData.isHideStatusBar();
         if (isHideStatusBar) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -42,17 +50,30 @@ public class ModeSelectionActivity extends AppCompatActivity implements View.OnC
             }
         }
 
-        Button exchangePerMatch = (Button) findViewById(R.id.exchange_per_match);
-        Button playAsBlack = (Button) findViewById(R.id.play_as_black);
-        Button playAsWhite = (Button) findViewById(R.id.play_as_white);
+        exchangePerMatch = (Button) findViewById(R.id.exchange_per_match);
+        playAsBlack = (Button) findViewById(R.id.play_as_black);
+        playAsWhite = (Button) findViewById(R.id.play_as_white);
         exchangePerMatch.setOnClickListener(this);
         playAsBlack.setOnClickListener(this);
         playAsWhite.setOnClickListener(this);
 
+        switch (pieceSort){
+            case 1:
+                exchangePerMatch.setBackgroundResource(R.drawable.button_playas_alt_01_h);
+                playAsBlack.setBackgroundResource(R.drawable.button_playas_black_01);
+                playAsWhite.setBackgroundResource(R.drawable.button_playas_white_01);
+                break;
+            case 2:
+                exchangePerMatch.setBackgroundResource(R.drawable.button_playas_alt_02_h);
+                playAsBlack.setBackgroundResource(R.drawable.button_playas_black_02);
+                playAsWhite.setBackgroundResource(R.drawable.button_playas_white_02);
+                break;
+            default:break;
+        }
 
-        Button simple = (Button) findViewById(R.id.simple);
-        Button middle = (Button) findViewById(R.id.middle);
-        Button hard = (Button) findViewById(R.id.hard);
+        simple = (Button) findViewById(R.id.simple);
+        middle = (Button) findViewById(R.id.middle);
+        hard = (Button) findViewById(R.id.hard);
         simple.setOnClickListener(this);
         middle.setOnClickListener(this);
         hard.setOnClickListener(this);
@@ -69,21 +90,69 @@ public class ModeSelectionActivity extends AppCompatActivity implements View.OnC
         switch (v.getId()){
             case R.id.exchange_per_match:
                 playMode=1;
+                switch (pieceSort){
+                    case 1:
+                        exchangePerMatch.setBackgroundResource(R.drawable.button_playas_alt_01_h);
+                        playAsBlack.setBackgroundResource(R.drawable.button_playas_black_01);
+                        playAsWhite.setBackgroundResource(R.drawable.button_playas_white_01);
+                        break;
+                    case 2:
+                        exchangePerMatch.setBackgroundResource(R.drawable.button_playas_alt_02_h);
+                        playAsBlack.setBackgroundResource(R.drawable.button_playas_black_02);
+                        playAsWhite.setBackgroundResource(R.drawable.button_playas_white_02);
+                        break;
+                    default:break;
+                }
                 break;
             case R.id.play_as_black:
                 playMode=2;
+                switch (pieceSort){
+                    case 1:
+                        exchangePerMatch.setBackgroundResource(R.drawable.button_playas_alt_01);
+                        playAsBlack.setBackgroundResource(R.drawable.button_playas_black_01_h);
+                        playAsWhite.setBackgroundResource(R.drawable.button_playas_white_01);
+                        break;
+                    case 2:
+                        exchangePerMatch.setBackgroundResource(R.drawable.button_playas_alt_02);
+                        playAsBlack.setBackgroundResource(R.drawable.button_playas_black_02_h);
+                        playAsWhite.setBackgroundResource(R.drawable.button_playas_white_02);
+                        break;
+                    default:break;
+                }
                 break;
             case R.id.play_as_white:
                 playMode=3;
+                switch (pieceSort){
+                    case 1:
+                        exchangePerMatch.setBackgroundResource(R.drawable.button_playas_alt_01);
+                        playAsBlack.setBackgroundResource(R.drawable.button_playas_black_01);
+                        playAsWhite.setBackgroundResource(R.drawable.button_playas_white_01_h);
+                        break;
+                    case 2:
+                        exchangePerMatch.setBackgroundResource(R.drawable.button_playas_alt_02);
+                        playAsBlack.setBackgroundResource(R.drawable.button_playas_black_02);
+                        playAsWhite.setBackgroundResource(R.drawable.button_playas_white_02_h);
+                        break;
+                    default:break;
+                }
                 break;
             case R.id.simple:
                 difficulty=1;
+                simple.setBackgroundResource(R.drawable.button_1_h);
+                middle.setBackgroundResource(R.drawable.button_2);
+                hard.setBackgroundResource(R.drawable.button_3);
                 break;
             case R.id.middle:
                 difficulty=2;
+                simple.setBackgroundResource(R.drawable.button_1);
+                middle.setBackgroundResource(R.drawable.button_2_h);
+                hard.setBackgroundResource(R.drawable.button_3);
                 break;
             case R.id.hard:
                 difficulty=3;
+                simple.setBackgroundResource(R.drawable.button_1);
+                middle.setBackgroundResource(R.drawable.button_2);
+                hard.setBackgroundResource(R.drawable.button_3_h);
                 break;
             case R.id.play:
                 intent =new Intent(ModeSelectionActivity.this,SinglePlayerActivity.class);

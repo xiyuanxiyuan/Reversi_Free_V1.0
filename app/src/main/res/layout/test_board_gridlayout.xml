@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="400dp"
     android:layout_height="400dp"
-    android:background="@drawable/board_hd">
+    android:background="@drawable/board_01_hd">
 
     <Space
         android:layout_width="match_parent"

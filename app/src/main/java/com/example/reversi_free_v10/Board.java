@@ -2788,5 +2788,28 @@ public class Board {
         return 0x0L;
     }
 
+    //-------------------------------------------------------------------------------------------------------------
+    public int getBlackPiecesNumber(){
+        int blackPiecesNumber=0;
+        long check=0x1L;
+        for(int i=0;i<64;i++){
+            if((black&check<<i)!=0x0L){
+                blackPiecesNumber++;
+            }
+        }
+        return blackPiecesNumber;
+    }
+
+    public int getWhitePiecesNumber(){
+        int whitePiecesNumber=0;
+        long check=0x1L;
+        for(int i=0;i<64;i++){
+            if((white&check<<i)!=0x0L){
+              whitePiecesNumber++;
+            }
+        }
+       return whitePiecesNumber;
+    }
+    //-------------------------------------------------------------------------------
 
 }

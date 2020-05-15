@@ -1,18 +1,16 @@
 package com.example.reversi_free_v10;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,18 +22,23 @@ public class SinglePlayerActivity extends AppCompatActivity{
     private int boardSort;
     private int pieceSort;
     private boolean isHideStatusBar;
+    private boolean isShowLegalMoves;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.single_player_layout);
 
-        ImageView boardBackground=(ImageView)findViewById(R.id.boardbackgound);
+        ImageView boardBackground=(ImageView)findViewById(R.id.board_background);
+        Button undo=(Button)findViewById(R.id.undo);
+        TextView blackPieces=(TextView)findViewById(R.id.single_mode_black_pieces);
+        TextView whitePieces=(TextView)findViewById(R.id.single_mode_white_pieces);
 
         globalData=(GlobalData)getApplication();
         boardSort=globalData.getBoardSort();
         pieceSort=globalData.getPieceSort();
         isHideStatusBar=globalData.isHideStatusBar();
+        isShowLegalMoves=globalData.isShowLegalMoves();
         if (isHideStatusBar) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -55,13 +58,13 @@ public class SinglePlayerActivity extends AppCompatActivity{
         }
 
         switch (boardSort){
-            case 1:boardBackground.setImageResource(R.drawable.board_hd);break;
+            case 1:boardBackground.setImageResource(R.drawable.board_01_hd);break;
             case 2:boardBackground.setImageResource(R.drawable.board_02_hd);break;
             case 3:boardBackground.setImageResource(R.drawable.board_03_hd);break;
             case 4:boardBackground.setImageResource(R.drawable.board_04_hd);break;
             case 5:boardBackground.setImageResource(R.drawable.board_05_hd);break;
             case 6:boardBackground.setImageResource(R.drawable.board_06_hd);break;
-            default:boardBackground.setImageResource(R.drawable.board_hd);break;
+            default:boardBackground.setImageResource(R.drawable.board_01_hd);break;
         }
 
         Intent intent = getIntent();
@@ -80,7 +83,7 @@ public class SinglePlayerActivity extends AppCompatActivity{
             }
         };
         recyclerView.setLayoutManager(gridLayoutManager);
-        final BoardAdapterAI adapter = new BoardAdapterAI(boardGridList, playMode, difficulty,pieceSort);
+        final BoardAdapterAI adapter = new BoardAdapterAI(this,boardGridList, playMode, difficulty,pieceSort,isShowLegalMoves,blackPieces,whitePieces);
         recyclerView.setAdapter(adapter);
 
     }
@@ -89,7 +92,7 @@ public class SinglePlayerActivity extends AppCompatActivity{
         for (int i = 0; i < 64; i++) {
             BoardGrid boardGrid = new BoardGrid(0x1L << i);
 
-            boardGrid.button_order = i;
+            //boardGrid.button_order = i;
 
             boardGridList.add(boardGrid);
         }
