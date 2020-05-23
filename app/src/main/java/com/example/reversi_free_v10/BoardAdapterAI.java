@@ -2,6 +2,7 @@ package com.example.reversi_free_v10;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +25,11 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
     private long touchedLocation;
     private Board board = new Board();
     private int flag = 1;
-    private CustomAlgorithm customAlgorithm = new CustomAlgorithm(board);
-    private CustomAlgorithm2 customAlgorithm2 = new CustomAlgorithm2(board);
+    private CustomAlgorithm customAlgorithm=new CustomAlgorithm();
+    private CustomAlgorithm2 customAlgorithm2=new CustomAlgorithm2();
+    private MiniMax miniMax =new MiniMax();
     private int mpieceSort;
+    private boolean misSoundOn;
     private boolean misShowLegalMoves;
     private TextView mblackPieces;
     private TextView mwhitePieces;
@@ -45,12 +48,13 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
         }
     }
 
-    public BoardAdapterAI(Context context, List<BoardGrid> boardGridList, int playMode, int difficulty, int pieceSort,boolean isShowLegalMoves, TextView blackPieces, TextView whitePieces) {
+    public BoardAdapterAI(Context context, List<BoardGrid> boardGridList, int playMode, int difficulty, int pieceSort,boolean isSoundOn,boolean isShowLegalMoves, TextView blackPieces, TextView whitePieces) {
         mcontext=context;
         mBoardGridList = boardGridList;
         mplayMode = playMode;
         mdifficulty = difficulty;
         mpieceSort = pieceSort;
+        misSoundOn=isSoundOn;
         misShowLegalMoves=isShowLegalMoves;
         mblackPieces=blackPieces;
         mwhitePieces=whitePieces;
@@ -76,7 +80,7 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
                 case 1:
                     if ((customAlgorithm.get_Reversal_Number_Most_Location(board.white, board.black) & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
                         board.drop_Black(customAlgorithm.get_Reversal_Number_Most_Location(board.white, board.black));
-                        //notifyDataSetChanged();
+                        notifyDataSetChanged();
                         flag = -1;
                     } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
                         flag = -1;
@@ -85,18 +89,25 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
                 case 2:
                     if ((customAlgorithm2.get_Highest_Score_Location(board.white, board.black) & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
                         board.drop_Black(customAlgorithm2.get_Highest_Score_Location(board.white, board.black));
-                        //notifyDataSetChanged();
+                        notifyDataSetChanged();
                         flag = -1;
                     } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
                         flag = -1;
                     }
                     break;
                 case 3:
+                    if ((miniMax.getMinMax(1,board.white,board.black)& board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
+                        board.drop_Black(miniMax.getMinMax(1,board.white,board.black));
+                        notifyDataSetChanged();
+                        flag = -1;
+                    } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
+                        flag = -1;
+                    }
                     break;
                 default:
                     if ((customAlgorithm.get_Reversal_Number_Most_Location(board.white, board.black) & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
                         board.drop_Black(customAlgorithm.get_Reversal_Number_Most_Location(board.white, board.black));
-                        //notifyDataSetChanged();
+                        notifyDataSetChanged();
                         flag = -1;
                     } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
                         flag = -1;
@@ -161,6 +172,10 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
 
                     if ((touchedLocation & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
                         board.drop_Black(touchedLocation);
+                        if(misSoundOn){
+                            MediaPlayer player = MediaPlayer.create(v.getContext(),R.raw.piecedrop);
+                            player.start();
+                        }
                         notifyDataSetChanged();
                         flag = -1;
                     } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
@@ -186,7 +201,15 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
                                 flag = 1;
                             }
                             break;
-                        case 3:break;
+                        case 3:
+                            if ((miniMax.getMinMax(-1,board.black,board.white)& board.search_Legal_Location(board.black, board.white)) != 0x0L && flag == -1) {//白棋落子
+                                board.drop_White(miniMax.getMinMax(-1,board.black,board.white));
+                                notifyDataSetChanged();
+                                flag = 1;
+                            } else if ((board.search_Legal_Location(board.black, board.white)) == 0x0L && (board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == -1) {
+                                flag = 1;
+                            }
+                            break;
                         default:
                             if ((customAlgorithm.get_Reversal_Number_Most_Location(board.black, board.white) & board.search_Legal_Location(board.black, board.white)) != 0x0L && flag == -1) {//白棋落子
                                 board.drop_White(customAlgorithm.get_Reversal_Number_Most_Location(board.black, board.white));
@@ -251,6 +274,10 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
 
                     if ((touchedLocation & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
                         board.drop_Black(touchedLocation);
+                        if(misSoundOn){
+                            MediaPlayer player = MediaPlayer.create(v.getContext(),R.raw.piecedrop);
+                            player.start();
+                        }
                         notifyDataSetChanged();
                         flag = -1;
                     } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
@@ -275,7 +302,15 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
                             } else if ((board.search_Legal_Location(board.black, board.white)) == 0x0L && (board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == -1) {
                                 flag = 1;
                             }
-                        case 3:break;
+                        case 3:
+                            if ((miniMax.getMinMax(-1,board.black,board.white)& board.search_Legal_Location(board.black, board.white)) != 0x0L && flag == -1) {//白棋落子
+                                board.drop_White(miniMax.getMinMax(-1,board.black,board.white));
+                                notifyDataSetChanged();
+                                flag = 1;
+                            } else if ((board.search_Legal_Location(board.black, board.white)) == 0x0L && (board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == -1) {
+                                flag = 1;
+                            }
+                            break;
                         default:
                             if ((customAlgorithm.get_Reversal_Number_Most_Location(board.black, board.white) & board.search_Legal_Location(board.black, board.white)) != 0x0L && flag == -1) {//白棋落子
                                 board.drop_White(customAlgorithm.get_Reversal_Number_Most_Location(board.black, board.white));
@@ -336,6 +371,10 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
 
                     if ((touchedLocation & board.search_Legal_Location(board.black, board.white)) != 0x0L && flag == -1) {//白棋落子
                         board.drop_White(touchedLocation);
+                        if(misSoundOn){
+                            MediaPlayer player = MediaPlayer.create(v.getContext(),R.raw.piecedrop);
+                            player.start();
+                        }
                         notifyDataSetChanged();
                         flag = 1;
                     } else if ((board.search_Legal_Location(board.black, board.white)) == 0x0L && (board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == -1) {

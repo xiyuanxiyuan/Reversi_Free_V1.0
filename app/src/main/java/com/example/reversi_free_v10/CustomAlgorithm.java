@@ -2,15 +2,14 @@ package com.example.reversi_free_v10;
 
 public class CustomAlgorithm {
 
-    public Board mboard=new Board();
+    public Board board=new Board();
 
-    public CustomAlgorithm(Board board){
-        mboard=board;
+    public CustomAlgorithm(){
     }
 
     public long get_Reversal_Number_Most_Location(long opponent_Board, long my_Board){
 
-        long legal_Drop_Location=mboard.search_Legal_Location(opponent_Board,my_Board);
+        long legal_Drop_Location= board.search_Legal_Location(opponent_Board,my_Board);
 
         long check=0x1L;
 
@@ -31,7 +30,7 @@ public class CustomAlgorithm {
     }
 
     public int get_Reversal_Number(long location, long opponent_Board, long my_Board){
-        long reversal_Result=mboard.reversal(location,opponent_Board,my_Board);
+        long reversal_Result= board.reversal(location,opponent_Board,my_Board);
         long check=0x1L;
         int reversal_Number=0;
         for(int i=0;i<64;i++){

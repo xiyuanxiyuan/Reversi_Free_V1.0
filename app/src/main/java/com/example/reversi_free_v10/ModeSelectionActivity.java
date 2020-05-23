@@ -3,6 +3,7 @@ package com.example.reversi_free_v10;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +16,8 @@ public class ModeSelectionActivity extends AppCompatActivity implements View.OnC
     private int difficulty=1;
     private GlobalData globalData;
     private int pieceSort;
+    private boolean isSoundOn;
+    private boolean isScreenTransitions;
     private boolean isHideStatusBar;
     Button exchangePerMatch;
     Button playAsBlack;
@@ -31,6 +34,8 @@ public class ModeSelectionActivity extends AppCompatActivity implements View.OnC
 
         globalData=(GlobalData)getApplication();
         pieceSort=globalData.getPieceSort();
+        isSoundOn=globalData.isSoundOn();
+        isScreenTransitions=globalData.isScreenTransitions();
         isHideStatusBar=globalData.isHideStatusBar();
         if (isHideStatusBar) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -90,6 +95,10 @@ public class ModeSelectionActivity extends AppCompatActivity implements View.OnC
         switch (v.getId()){
             case R.id.exchange_per_match:
                 playMode=1;
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(this,R.raw.select);
+                    player.start();
+                }
                 switch (pieceSort){
                     case 1:
                         exchangePerMatch.setBackgroundResource(R.drawable.button_playas_alt_01_h);
@@ -106,6 +115,10 @@ public class ModeSelectionActivity extends AppCompatActivity implements View.OnC
                 break;
             case R.id.play_as_black:
                 playMode=2;
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(this,R.raw.select);
+                    player.start();
+                }
                 switch (pieceSort){
                     case 1:
                         exchangePerMatch.setBackgroundResource(R.drawable.button_playas_alt_01);
@@ -122,6 +135,10 @@ public class ModeSelectionActivity extends AppCompatActivity implements View.OnC
                 break;
             case R.id.play_as_white:
                 playMode=3;
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(this,R.raw.select);
+                    player.start();
+                }
                 switch (pieceSort){
                     case 1:
                         exchangePerMatch.setBackgroundResource(R.drawable.button_playas_alt_01);
@@ -138,29 +155,49 @@ public class ModeSelectionActivity extends AppCompatActivity implements View.OnC
                 break;
             case R.id.simple:
                 difficulty=1;
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(this,R.raw.select);
+                    player.start();
+                }
                 simple.setBackgroundResource(R.drawable.button_1_h);
                 middle.setBackgroundResource(R.drawable.button_2);
                 hard.setBackgroundResource(R.drawable.button_3);
                 break;
             case R.id.middle:
                 difficulty=2;
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(this,R.raw.select);
+                    player.start();
+                }
                 simple.setBackgroundResource(R.drawable.button_1);
                 middle.setBackgroundResource(R.drawable.button_2_h);
                 hard.setBackgroundResource(R.drawable.button_3);
                 break;
             case R.id.hard:
                 difficulty=3;
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(this,R.raw.select);
+                    player.start();
+                }
                 simple.setBackgroundResource(R.drawable.button_1);
                 middle.setBackgroundResource(R.drawable.button_2);
                 hard.setBackgroundResource(R.drawable.button_3_h);
                 break;
             case R.id.play:
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(this,R.raw.select);
+                    player.start();
+                }
                 intent =new Intent(ModeSelectionActivity.this,SinglePlayerActivity.class);
                 intent.putExtra("playMode",playMode);
                 intent.putExtra("difficulty",difficulty);
                 startActivity(intent);
                 break;
             case R.id.back:
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(this,R.raw.select);
+                    player.start();
+                }
                 intent=new Intent(ModeSelectionActivity.this,MainActivity.class);
                 startActivity(intent);
                 break;

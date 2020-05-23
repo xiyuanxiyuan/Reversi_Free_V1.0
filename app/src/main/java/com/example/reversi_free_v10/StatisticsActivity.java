@@ -1,11 +1,20 @@
 package com.example.reversi_free_v10;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +22,7 @@ import android.widget.Toast;
 public class StatisticsActivity extends AppCompatActivity implements View.OnClickListener{
 
     Intent intent;
+    GlobalData globalData;
     int simpleLevelWins=0;
     int simpleLevelDraws=0;
     int simpleLevelLosses=0;
@@ -28,13 +38,46 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
     double wins=0;
     double losses=0;
     double winRate=0;
+    private boolean isSoundOn;
+    private boolean isScreenTransitions;
+    private boolean isHideStatusBar;
     TextView statistics;
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+//        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+//        Transition explode = TransitionInflater.from(this).inflateTransition(R.transition.fade);
+//        getWindow().setExitTransition(explode);
+//        getWindow().setEnterTransition(explode);
+//        getWindow().setReenterTransition(explode);
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.statistics_layout);
+
+        globalData=(GlobalData)getApplication();
+        isSoundOn=globalData.isSoundOn();
+        isScreenTransitions=globalData.isScreenTransitions();
+        isHideStatusBar=globalData.isHideStatusBar();
+        if (isHideStatusBar) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    // 全屏显示，隐藏状态栏和导航栏，拉出状态栏和导航栏显示一会儿后消失。
+                    getWindow().getDecorView().setSystemUiVisibility(
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                } else {
+                    // 全屏显示，隐藏状态栏
+                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+                }
+            }
+        }
 
         SharedPreferences sharedPreferences=getSharedPreferences("statistics",MODE_PRIVATE);
 
@@ -80,10 +123,18 @@ public class StatisticsActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v){
         switch (v.getId()){
             case R.id.back:
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(this,R.raw.select);
+                    player.start();
+                }
                 intent=new Intent(StatisticsActivity.this,MainActivity.class);
                 startActivity(intent);
                 break;
             case R.id.reset:
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(this,R.raw.select);
+                    player.start();
+                }
                 SharedPreferences.Editor editor=getSharedPreferences("statistics",MODE_PRIVATE).edit();
                 editor.putInt("simpleLevelWins",0);
                 editor.putInt("simpleLevelDraws",0);

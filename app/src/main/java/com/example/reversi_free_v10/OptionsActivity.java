@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -59,6 +60,10 @@ public class OptionsActivity extends AppCompatActivity implements View.OnClickLi
         lastBoard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(getApplicationContext(),R.raw.select);
+                    player.start();
+                }
                 boardSort--;
                 if (boardSort <= 0) {
                     boardSort = 6;
@@ -117,6 +122,10 @@ public class OptionsActivity extends AppCompatActivity implements View.OnClickLi
         nextBoard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(getApplicationContext(),R.raw.select);
+                    player.start();
+                }
                 boardSort++;
                 if (boardSort >= 7) {
                     boardSort = 1;
@@ -151,6 +160,10 @@ public class OptionsActivity extends AppCompatActivity implements View.OnClickLi
         lastPiece.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(getApplicationContext(),R.raw.select);
+                    player.start();
+                }
                 pieceSort--;
                 if (pieceSort <= 0) {
                     pieceSort = 2;
@@ -185,6 +198,10 @@ public class OptionsActivity extends AppCompatActivity implements View.OnClickLi
         nextPiece.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(getApplicationContext(),R.raw.select);
+                    player.start();
+                }
                 pieceSort++;
                 if (pieceSort >= 3) {
                     pieceSort = 1;
@@ -209,9 +226,56 @@ public class OptionsActivity extends AppCompatActivity implements View.OnClickLi
         hideStatusBar.setChecked(isHideStatusBar);
         showLegalMoves.setChecked(isShowLegalMoves);
 
+        soundOn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (soundOn.isChecked()) {
+                    isSoundOn = true;
+                } else {
+                    isSoundOn = false;
+                }
+
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(getApplicationContext(),R.raw.select);
+                    player.start();
+                }
+            }
+        });
+
+        screenTransitions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (screenTransitions.isChecked()) {
+                    isScreenTransitions = true;
+                } else {
+                    isScreenTransitions = false;
+                }
+
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(getApplicationContext(),R.raw.select);
+                    player.start();
+                }
+            }
+        });
+
+
         hideStatusBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (hideStatusBar.isChecked()) {
+                    isHideStatusBar = true;
+                } else {
+                    isHideStatusBar = false;
+                }
+
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(getApplicationContext(),R.raw.select);
+                    player.start();
+                }
+
                 if (hideStatusBar.isChecked()) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -234,31 +298,29 @@ public class OptionsActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        back.setOnClickListener(new View.OnClickListener() {
+        showLegalMoves.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (soundOn.isChecked()) {
-                    isSoundOn = true;
-                } else {
-                    isSoundOn = false;
-                }
-
-                if (screenTransitions.isChecked()) {
-                    isScreenTransitions = true;
-                } else {
-                    isScreenTransitions = false;
-                }
-
-                if (hideStatusBar.isChecked()) {
-                    isHideStatusBar = true;
-                } else {
-                    isHideStatusBar = false;
-                }
 
                 if (showLegalMoves.isChecked()) {
                     isShowLegalMoves = true;
                 } else {
                     isShowLegalMoves = false;
+                }
+
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(getApplicationContext(),R.raw.select);
+                    player.start();
+                }
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(getApplicationContext(),R.raw.select);
+                    player.start();
                 }
 
                 globalData.setSoundOn(isSoundOn);
@@ -274,6 +336,30 @@ public class OptionsActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
+    }
+
+    public void onResume(){
+        super.onResume();
+        isSoundOn=globalData.isSoundOn();
+        isScreenTransitions=globalData.isScreenTransitions();
+        isHideStatusBar=globalData.isHideStatusBar();
+        if (isHideStatusBar) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    // 全屏显示，隐藏状态栏和导航栏，拉出状态栏和导航栏显示一会儿后消失。
+                    getWindow().getDecorView().setSystemUiVisibility(
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                } else {
+                    // 全屏显示，隐藏状态栏
+                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+                }
+            }
+        }
     }
 
 }

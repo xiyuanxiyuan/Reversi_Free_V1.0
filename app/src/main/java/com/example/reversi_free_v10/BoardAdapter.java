@@ -1,5 +1,6 @@
 package com.example.reversi_free_v10;
 
+import android.media.MediaPlayer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,19 +11,21 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> {
 
     private List<BoardGrid> mBoardGridList;
+    private List<Board> mBoardList = new ArrayList<>();
     private long touchedLocation;
-    private Board board = new Board();
+    private Board mboard = new Board();
     private int flag = 1;
     private int mpieceSort;
+    private boolean misSoundOn;
     private boolean misShowLegalMoves;
     private TextView mblackPieces;
     private TextView mwhitePieces;
-
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -36,12 +39,16 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
         }
     }
 
-    public BoardAdapter(List<BoardGrid> boardGridList, int pieceSort,boolean isShowLeaglMoves,TextView blackPieces,TextView whitePieces) {
+    public BoardAdapter(Board board,List<BoardGrid> boardGridList, int pieceSort, boolean isSoundOn, boolean isShowLeaglMoves, TextView blackPieces, TextView whitePieces) {
+
+        mboard=board;
         mBoardGridList = boardGridList;
         mpieceSort = pieceSort;
-        misShowLegalMoves=isShowLeaglMoves;
-        mblackPieces=blackPieces;
-        mwhitePieces=whitePieces;
+        misSoundOn = isSoundOn;
+        misShowLegalMoves = isShowLeaglMoves;
+        mblackPieces = blackPieces;
+        mwhitePieces = whitePieces;
+
     }
 
     @Override
@@ -49,6 +56,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.board_grid_layout, parent, false);
         final ViewHolder holder = new ViewHolder(view);
 
+        mBoardList.add(this.mboard);
         holder.boardGrid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,68 +68,78 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
 
                 //Toast.makeText(view.getContext(), "you clicked: " + touchedLocation, Toast.LENGTH_SHORT).show();
 
-                notifyDataSetChanged();
+                //notifyDataSetChanged();
 
-                if ((touchedLocation & (board.search_Legal_Location(board.white, board.black) | board.search_Legal_Location(board.black, board.white))) == 0x0L) {
+                if ((touchedLocation & (mboard.search_Legal_Location(mboard.white, mboard.black) | mboard.search_Legal_Location(mboard.black, mboard.white))) == 0x0L) {
                     return;
 
                 }
 
-                if ((touchedLocation & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
-                    board.drop_Black(touchedLocation);
-                    notifyDataSetChanged();
+                if ((touchedLocation & mboard.search_Legal_Location(mboard.white, mboard.black)) != 0x0L && flag == 1) {//黑棋落子
+                    mboard.drop_Black(touchedLocation);
+                    if (misSoundOn) {
+                        MediaPlayer player = MediaPlayer.create(v.getContext(), R.raw.piecedrop);
+                        player.start();
+                    }
+                    mBoardList.add(mboard);
+                    // notifyDataSetChanged();
                     flag = -1;
-                } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
+                } else if ((mboard.search_Legal_Location(mboard.white, mboard.black)) == 0x0L && mboard.search_Legal_Location(mboard.black, mboard.white) != 0x0L && flag == 1) {
                     flag = -1;
                 }
 
-                if ((touchedLocation & board.search_Legal_Location(board.black, board.white)) != 0x0L && flag == -1) {//白棋落子
-                    board.drop_White(touchedLocation);
-                    notifyDataSetChanged();
+                if ((touchedLocation & mboard.search_Legal_Location(mboard.black, mboard.white)) != 0x0L && flag == -1) {//白棋落子
+                    mboard.drop_White(touchedLocation);
+                    if (misSoundOn) {
+                        MediaPlayer player = MediaPlayer.create(v.getContext(), R.raw.piecedrop);
+                        player.start();
+                    }
+                    mBoardList.add(mboard);
+                    // notifyDataSetChanged();
                     flag = 1;
-                } else if ((board.search_Legal_Location(board.black, board.white)) == 0x0L && (board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == -1) {
+                } else if ((mboard.search_Legal_Location(mboard.black, mboard.white)) == 0x0L && (mboard.search_Legal_Location(mboard.white, mboard.black)) != 0x0L && flag == -1) {
                     flag = 1;
                 }
 
-                if(misShowLegalMoves){
-                    if(flag==1)
-                    {
+                if (misShowLegalMoves) {
+                    if (flag == 1) {
                         clearBoardGrids();
-                        showLegalMoves(board.white,board.black);
-                        notifyDataSetChanged();
-                    }else {
+                        showLegalMoves(mboard.white, mboard.black);
+                        // notifyDataSetChanged();
+                    } else {
                         clearBoardGrids();
-                        showLegalMoves(board.black,board.white);
-                        notifyDataSetChanged();
+                        showLegalMoves(mboard.black, mboard.white);
+                        // notifyDataSetChanged();
                     }
                 }
 
 
-                if (board.search_Legal_Location(board.white, board.black) == 0x0L && board.search_Legal_Location(board.black, board.white) == 0x0L) {
+                if (mboard.search_Legal_Location(mboard.white, mboard.black) == 0x0L && mboard.search_Legal_Location(mboard.black, mboard.white) == 0x0L) {
                     Toast.makeText(view.getContext(), "game over", Toast.LENGTH_LONG).show();
-                    if(judgeVictory()==1){
+                    if (judgeVictory() == 1) {
                         Toast.makeText(view.getContext(), "Black Win", Toast.LENGTH_LONG).show();
-                    }else if(judgeVictory()==-1){
+                    } else if (judgeVictory() == -1) {
                         Toast.makeText(view.getContext(), "White Win", Toast.LENGTH_LONG).show();
-                    }else{
+                    } else {
                         Toast.makeText(view.getContext(), "Draw", Toast.LENGTH_LONG).show();
                     }
                 }
+                notifyDataSetChanged();
 
             }
         });
+
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         BoardGrid boardGrid = mBoardGridList.get(position);
 
         int boardgrid_piece = boardGrid.getBoardgrid_piece();
 
-        changeBoardGrids(board.white, board.black);
+        changeBoardGrids(mboard.white, mboard.black);
         if (boardgrid_piece == 1) {
             switch (mpieceSort) {
                 case 1:
@@ -146,14 +164,16 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
                     holder.boardGridImage.setImageResource(R.drawable.p_01_b);
                     break;
             }
-        }else if(boardgrid_piece==2){
+        } else if (boardgrid_piece == 2) {
             holder.boardGridImage.setImageResource(R.drawable.highlight_legal_move);
-        }else {
-            holder.boardGridImage.setWillNotDraw(true);
+        } else {
+            //holder.boardGridImage.setWillNotDraw(true);
+            //holder.boardGridImage.setImageDrawable(null);
+            holder.boardGridImage.setImageResource(0);
         }
 
-        mblackPieces.setText(board.getBlackPiecesNumber()+"");
-        mwhitePieces.setText(board.getWhitePiecesNumber()+"");
+        mblackPieces.setText(mboard.getBlackPiecesNumber() + "");
+        mwhitePieces.setText(mboard.getWhitePiecesNumber() + "");
 
     }
 
@@ -596,41 +616,45 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
 
     }
 
-    private void clearBoardGrids(){
-        for (int i=0;i<64;i++){
+    private void clearBoardGrids() {
+        for (int i = 0; i < 64; i++) {
             mBoardGridList.get(i).setBoardgrid_piece(0);
         }
 
     }
 
-    private void showLegalMoves(long opponent_Board,long my_Board){
-        long legalMoves=board.search_Legal_Location(opponent_Board,my_Board);
-        long check=0x1L;
-        for(int i=0;i<64;i++){
-            if((legalMoves&check<<i)!=0x0L){
+    private void showLegalMoves(long opponent_Board, long my_Board) {
+        long legalMoves = mboard.search_Legal_Location(opponent_Board, my_Board);
+        long check = 0x1L;
+        for (int i = 0; i < 64; i++) {
+            if ((legalMoves & check << i) != 0x0L) {
                 mBoardGridList.get(i).setBoardgrid_piece(2);
             }
         }
     }
 
-    private int judgeVictory(){
-        int blackBoardgrid=0;
-        int whiteBoardgrid=0;
-        long check=0x1L;
-        for(int i=0;i<64;i++){
-            if((board.black&check<<i)!=0x0L){
+    private int judgeVictory() {
+        int blackBoardgrid = 0;
+        int whiteBoardgrid = 0;
+        long check = 0x1L;
+        for (int i = 0; i < 64; i++) {
+            if ((mboard.black & check << i) != 0x0L) {
                 blackBoardgrid++;
-            }else if((board.white&check<<i)!=0x0L){
+            } else if ((mboard.white & check << i) != 0x0L) {
                 whiteBoardgrid++;
             }
         }
-        if(blackBoardgrid>whiteBoardgrid){
+        if (blackBoardgrid > whiteBoardgrid) {
             return 1;
-        }else if(blackBoardgrid<whiteBoardgrid){
+        } else if (blackBoardgrid < whiteBoardgrid) {
             return -1;
-        }else {
+        } else {
             return 0;
         }
+    }
+
+    public List<Board> getBoardList(){
+        return mBoardList;
     }
 
 }

@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +22,8 @@ public class SinglePlayerActivity extends AppCompatActivity{
     private GlobalData globalData;
     private int boardSort;
     private int pieceSort;
+    private boolean isSoundOn;
+    private boolean isScreenTransitions;
     private boolean isHideStatusBar;
     private boolean isShowLegalMoves;
 
@@ -37,6 +40,8 @@ public class SinglePlayerActivity extends AppCompatActivity{
         globalData=(GlobalData)getApplication();
         boardSort=globalData.getBoardSort();
         pieceSort=globalData.getPieceSort();
+        isSoundOn=globalData.isSoundOn();
+        isScreenTransitions=globalData.isScreenTransitions();
         isHideStatusBar=globalData.isHideStatusBar();
         isShowLegalMoves=globalData.isShowLegalMoves();
         if (isHideStatusBar) {
@@ -83,8 +88,20 @@ public class SinglePlayerActivity extends AppCompatActivity{
             }
         };
         recyclerView.setLayoutManager(gridLayoutManager);
-        final BoardAdapterAI adapter = new BoardAdapterAI(this,boardGridList, playMode, difficulty,pieceSort,isShowLegalMoves,blackPieces,whitePieces);
+        final BoardAdapterAI adapter = new BoardAdapterAI(this,boardGridList, playMode, difficulty,pieceSort,isSoundOn,isShowLegalMoves,blackPieces,whitePieces);
         recyclerView.setAdapter(adapter);
+
+        undo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(isSoundOn){
+                    MediaPlayer player = MediaPlayer.create(getApplicationContext(),R.raw.select);
+                    player.start();
+                }
+
+            }
+        });
 
     }
 
