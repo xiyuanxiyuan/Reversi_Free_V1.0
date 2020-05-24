@@ -37,7 +37,7 @@ public class MiniMax {
 
                     List<Result> resultList3 = get_Current_Layer_Result(mmmboard.white, mmmboard.black);
                     for (int k = 0; k < resultList3.size(); k++) {
-                        Board mmmmboard = mmmboard;
+                       // Board mmmmboard = mmmboard;
                         int score3=resultList3.get(k).score;
                         if(mostScore<=score1+score2+score3){
                             bestLocation=resultList1.get(i).location;
@@ -45,7 +45,12 @@ public class MiniMax {
                     }
                 }
             }
-            return bestLocation;
+            if(bestLocation!=0x0L){
+                return bestLocation;
+            }else{
+                return customAlgorithm2.get_Highest_Score_Location(opponent_Board,my_Board);
+            }
+
         }
 
         if (flag == -1) {
@@ -76,7 +81,7 @@ public class MiniMax {
                     List<Result> resultList3 = get_Current_Layer_Result(mmmboard.black , mmmboard.white);
                     for (int k = 0; k < resultList3.size(); k++) {
 
-                        Board mmmmboard = mmmboard;
+                        //Board mmmmboard = mmmboard;
                         int score3=resultList3.get(k).score;
                         if(mostScore<=score1+score2+score3){
                             bestLocation=resultList1.get(i).location;
@@ -92,7 +97,11 @@ public class MiniMax {
                         }
                     }
                 }
-            return bestLocation;
+            if(bestLocation!=0x0L){
+                return bestLocation;
+            }else{
+                return customAlgorithm2.get_Highest_Score_Location(opponent_Board,my_Board);
+            }
         }
         return 0x0L;
     }

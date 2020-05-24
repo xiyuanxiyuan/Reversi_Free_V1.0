@@ -80,7 +80,7 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
                 case 1:
                     if ((customAlgorithm.get_Reversal_Number_Most_Location(board.white, board.black) & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
                         board.drop_Black(customAlgorithm.get_Reversal_Number_Most_Location(board.white, board.black));
-                        notifyDataSetChanged();
+                        //notifyDataSetChanged();
                         flag = -1;
                     } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
                         flag = -1;
@@ -89,7 +89,7 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
                 case 2:
                     if ((customAlgorithm2.get_Highest_Score_Location(board.white, board.black) & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
                         board.drop_Black(customAlgorithm2.get_Highest_Score_Location(board.white, board.black));
-                        notifyDataSetChanged();
+                        //notifyDataSetChanged();
                         flag = -1;
                     } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
                         flag = -1;
@@ -98,7 +98,7 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
                 case 3:
                     if ((miniMax.getMinMax(1,board.white,board.black)& board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
                         board.drop_Black(miniMax.getMinMax(1,board.white,board.black));
-                        notifyDataSetChanged();
+                        //notifyDataSetChanged();
                         flag = -1;
                     } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
                         flag = -1;
@@ -107,7 +107,7 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
                 default:
                     if ((customAlgorithm.get_Reversal_Number_Most_Location(board.white, board.black) & board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == 1) {//黑棋落子
                         board.drop_Black(customAlgorithm.get_Reversal_Number_Most_Location(board.white, board.black));
-                        notifyDataSetChanged();
+                        //notifyDataSetChanged();
                         flag = -1;
                     } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
                         flag = -1;
@@ -115,6 +115,12 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
                     break;
             }
 
+        }
+
+        if(misShowLegalMoves){
+            //clearBoardGrids();
+            showLegalMoves(board.black,board.white);
+            //notifyDataSetChanged();
         }
 
         int boardgrid_piece = boardGrid.getBoardgrid_piece();
@@ -180,6 +186,8 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
                         flag = -1;
                     } else if ((board.search_Legal_Location(board.white, board.black)) == 0x0L && board.search_Legal_Location(board.black, board.white) != 0x0L && flag == 1) {
                         flag = -1;
+                    }else{
+                        flag=-1;
                     }
 
                     switch (mdifficulty){
@@ -378,12 +386,13 @@ public class BoardAdapterAI extends RecyclerView.Adapter<BoardAdapterAI.ViewHold
                         notifyDataSetChanged();
                         flag = 1;
                     } else if ((board.search_Legal_Location(board.black, board.white)) == 0x0L && (board.search_Legal_Location(board.white, board.black)) != 0x0L && flag == -1) {
+                        notifyDataSetChanged();
                         flag = 1;
                     }
                     if(misShowLegalMoves){
                         clearBoardGrids();
-                        showLegalMoves(board.black,board.white);
-                        notifyDataSetChanged();
+                        //showLegalMoves(board.black,board.white);
+                        //notifyDataSetChanged();
                     }
 
                     if (board.search_Legal_Location(board.white, board.black) == 0x0L && board.search_Legal_Location(board.black, board.white) == 0x0L) {
